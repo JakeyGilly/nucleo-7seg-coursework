@@ -1,52 +1,5 @@
 #include "mbed.h"
-
-// set the pins for the 7-segment display to output
-DigitalOut seg_a(D2);
-DigitalOut seg_b(D3);
-DigitalOut seg_c(D4);
-DigitalOut seg_d(D5);
-DigitalOut seg_e(D6);
-DigitalOut seg_f(D7);
-DigitalOut seg_g(D8);
-
-
-class seven_segment {
-    // delay for printing each character
-    Kernel::Clock::duration_u32 delay;
-    // 7-segment display patterns for each character and digit
-    int chars[26] = {250, 62, 26, 122, 158, 142, 188, 46, 136, 176, 174, 28, 170, 42, 58, 206, 230, 10, 180, 30, 56, 84, 86, 40, 118, 216};
-    int digits[10] = {252, 96, 218, 242, 102, 182, 190, 224, 254, 246};
-public:
-    // constructor
-    seven_segment(Kernel::Clock::duration_u32 delay) {
-        this->delay = delay;
-    }
-    // function to display a character on the 7-segment display
-    // it converts the character to the 7-segment pattern and calls the display function
-    void display_char(char c) {
-        printf("displaying character %c\n", c);
-        if (c >= 48 && c <= 57) {
-            display(digits[c-48]);
-        } else if (c >= 97 && c <= 122) {
-            display(chars[c-97]);
-        }
-        ThisThread::sleep_for(delay);
-    }
-    // function to display a 7-segment pattern on the display
-    void display(int s) {
-        seg_a = (s & 0b10000000) != 0;
-        seg_b = (s & 0b01000000) != 0;
-        seg_c = (s & 0b00100000) != 0;
-        seg_d = (s & 0b00010000) != 0;
-        seg_e = (s & 0b00001000) != 0;
-        seg_f = (s & 0b00000100) != 0;
-        seg_g = (s & 0b00000010) != 0;
-    }
-    // function to change the delay for printing each character
-    void set_delay(Kernel::Clock::duration_u32 delay) {
-        this->delay = delay;
-    }
-};
+#include "7Segment/7segment.h"
 
 int main() {
     // set the buttons to input with pull-up resistors
@@ -66,7 +19,7 @@ int main() {
     int count1 = 0; 
     int count2 = 0;
 
-    seven_segment sevsegment(1000ms);
+    SevenSegment sevsegment(1000ms, D2, D3, D4, D5, D6, D7, D8);
     
     while (true) {
         // check if button 1 is pressed
